@@ -25,23 +25,21 @@ class WorksSpider(scrapy.Spider):
             liricists.append(c)
         scores = response.xpath('//img[contains(@id,"main_Tema1_img_part")]/@src').extract()
         lyrics = response.xpath('//span[@id="main_Tema1_lbl_Letra"]/node()').extract()
-        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", (.*?), {.*}\);', re.MULTILINE | re.DOTALL)
+
+        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", \[\r\n[\t| ]*(.*?)\r\n[\t| ]*\]\r\n[\t| ]*, {.*}\);', re.MULTILINE | re.DOTALL)
         audio2 = response.xpath('//script[contains(., "var audioPlaylist")]/text()').re(pattern)
         audio = []
         if len(audio2):
-            audio_items=\
-            re.findall(r'{(.*)}', audio2[0])
+            audio_items= audio2[0][1:-1].split('},{')
             for rec in audio_items:
                 item = {}
                 rec_items = re.findall(r'(id:".*"),(idtema:".*"),(titulo:".*"),(canta:".*"),(detalles:".*"),(duracion:".*"),(formacion:".*"),(oga:".*"),(mp3:".*"),(existeenlistasusuario:".*"),(idusuario:".*")', rec)
-                for b in rec_items:
-                    for a in b:
-                        a = a[:len(a)-1]
-                        a = a.split(':"')
-                        if a[0] in ["id","mp3","oga","titulo","duracion","formacion","detalles"]:
-                            item[a[0]] = a[1]
+                for a in rec_items[0]:
+                    a = a[:-1]
+                    a = a.split(':"')
+                    if a[0] in ["id","mp3","oga","titulo","duracion","formacion","detalles"]:
+                        item[a[0]] = a[1]
                 audio.append(item)
-
         videos = response.xpath('//iframe[contains(@src,"youtu")]/@src').extract()
         recordings=[]
         for d in response.xpath('//div[@class="cajita_gris3"]'):

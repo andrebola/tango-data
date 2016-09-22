@@ -10,7 +10,7 @@ class ArticlesSpider(scrapy.Spider):
     f.close()
 
     def parse(self, response):
-        article_url = response.url
+        article_url = response.xpath('//meta[@property="og:url"]/@content').extract_first()
         title = response.xpath('//span[@id="main_historia1_lbl_Titulo"]/text()').extract_first()
         content = response.xpath('//span[@id="main_historia1_lbl_Cronica"]/node()').extract()
         authors = response.xpath('//a[contains(@id,"main_historia1_RP_Autores_hl_Autor_")]/@href').extract()
