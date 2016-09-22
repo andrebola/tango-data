@@ -26,7 +26,7 @@ class WorksSpider(scrapy.Spider):
         scores = response.xpath('//img[contains(@id,"main_Tema1_img_part")]/@src').extract()
         lyrics = response.xpath('//span[@id="main_Tema1_lbl_Letra"]/node()').extract()
 
-        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", \[\r\n[\t| ]*(.*?)\r\n[\t| ]*\]\r\n[\t| ]*, {.*}\);', re.MULTILINE | re.DOTALL)
+        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", \[[\r\n]?[\t| ]*(.*?)[\r\n]?[\t| ]*\][\r\n]?[\t| ]*, {.*}\);', re.MULTILINE | re.DOTALL)
         audio2 = response.xpath('//script[contains(., "var audioPlaylist")]/text()').re(pattern)
         audio = []
         if len(audio2):
