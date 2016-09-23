@@ -34,7 +34,7 @@ class ArtistsSpider(scrapy.Spider):
         for c in \
                 response.xpath('//a[contains(@id,"main_fichacreador1_DL_Partituras_hl_Partitura_")]/@href').extract():
             compositions.append(c)
-        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", \[[\r\n]?[\t| ]*(.*?)[\r\n]?[\t| ]*\][\r\n]?[\t| ]*, {.*}\);', re.MULTILINE | re.DOTALL)
+        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", [\[\r\n\t\t   ]?[ ]?(.*?)[\r\n\t        \]\r\n    ]?[ \]]?, {.*}\);', re.MULTILINE | re.DOTALL)
         audio2 = response.xpath('//script[contains(., "var audioPlaylist")]/text()').re(pattern)
         audio = []
         if len(audio2):
