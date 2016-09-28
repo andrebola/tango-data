@@ -10,7 +10,8 @@ class WorksSpider(scrapy.Spider):
     f.close()
 
     def parse(self, response):
-        work_url = response.url
+        #work_url = response.url
+        work_url = response.xpath('//meta[@property="og:url"]/@content').extract_first()
         img = response.xpath('//img[@id="main_Tema1_img_part"]/@src').extract_first()
         title = response.xpath('//span[@id="main_Tema1_lbl_Titulo"]/text()').extract_first()
         work_type = response.xpath('//span[@id="main_Tema1_lbl_Ritmo"]/text()').extract_first()
@@ -26,7 +27,7 @@ class WorksSpider(scrapy.Spider):
         scores = response.xpath('//img[contains(@id,"main_Tema1_img_part")]/@src').extract()
         lyrics = response.xpath('//span[@id="main_Tema1_lbl_Letra"]/node()').extract()
 
-        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", \[[\r\n]?[\t| ]*(.*?)[\r\n]?[\t| ]*\][\r\n]?[\t| ]*, {.*}\);', re.MULTILINE | re.DOTALL)
+        pattern = re.compile(r'var audioPlaylist = new Playlist\(".*", [\[\r\n\t\t   ]?[ ]?(.*?)[\r\n\t        \]\r\n    ]?[ \]]?, {.*}\);', re.MULTILINE | re.DOTALL)
         audio2 = response.xpath('//script[contains(., "var audioPlaylist")]/text()').re(pattern)
         audio = []
         if len(audio2):
