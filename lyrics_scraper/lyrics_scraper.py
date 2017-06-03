@@ -1,11 +1,12 @@
 import os
 import json
 
-import lyricswikia
-import lyricsmania
-import minilyrics
-import musixmatch
-import songlyrics
+#import lyricswikia
+#import lyricsmania
+#import minilyrics
+#import musixmatch
+#import songlyrics
+import chartlyrics
 
 class LyricsScraper(object):
     def get_lyrics(self, works, artists):
@@ -29,7 +30,8 @@ class LyricsScraper(object):
                 'lyricsmania': lyricsmania.Lyricsmania(),
                 'minilyrics': minilyrics.Minilyrics(),
                 'musixmatch': musixmatch.Musixmatch(),
-                'songlyrics': songlyrics.Songlyrics()
+                'songlyrics': songlyrics.Songlyrics(),
+                'chartlyrics': chartlyrics.Chartlyrics()
                 }
         for w in works:
             for source in sources.keys():
@@ -41,10 +43,11 @@ class LyricsScraper(object):
                     lyrics = []
                     search_artists = set(w['lyricists'] + w['composers'])
                     for a in search_artists:
-                        ret = sources[source].get_data(artists[a]['name'], w['title'])
-                        if len(ret):
-                            lyrics.append(ret)
-                    with open(location, 'w') as fp:
-                        json.dump(lyrics, fp)
+                        if artists[a]['name']:
+                            ret = sources[source].get_data(artists[a]['name'], w['title'])
+                            if len(ret):
+                                lyrics.append(ret)
+                        with open(location, 'w') as fp:
+                            json.dump(lyrics, fp)
 
 
