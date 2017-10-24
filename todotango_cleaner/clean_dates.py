@@ -7,12 +7,30 @@ def get_years():
     r  = json.load(open('data/clean/recordings.json'))
     l  = json.load(open('data/clean/lyrics.json'))
     a  = json.load(open('data/clean/artists.json'))
+    sadic =json.load(open('data/sadic_metadata.json'))
 
     works_years = {}
 
-    # Set date to works from the date of the first recording
+    # Set dates with the value in the works from todotango
+    for i in f:
+        if (len(i['date'])):
+            works_years[i['id']] = int(i['date'][2])
+
+    # Get missing dates from sadic
+    sadic_dates = {}
+    for i in sadic:
+        if i['date']:
+            sadic_dates[i['url'].split('/')[5]] = int(i['date'].split('/')[2])
+
+    for k in l.keys():
+        if int(k) not in works_years:
+            todotango_id = f[int(k)]['external_id']['todotango'].split('/')[5]
+            if todotango_id in sadic_dates:
+                works_years[int(k)] = sadic_dates[todotango_id]
+
+    # Set missing dates to works from the date of the first recording
     for i in r:
-        if i['description']:
+        if i['work'] not in works_years and i['description']:
             set_date = None
             match = re.findall('(19\d{2})', i['description'])
             match20 = re.findall('(20\d{2})', i['description'])
@@ -32,11 +50,6 @@ def get_years():
                     set_date = d
             if set_date != None:
                 works_years[i['work']] = set_date
-
-    # Override dates with the date in the works
-    for i in f:
-        if (len(i['date'])):
-            works_years[i['id']] = int(i['date'][2])
 
     # Get missing dates from authors birth dates
     d = works_years.keys()
@@ -60,9 +73,10 @@ def get_years():
                     if last_end:
                         set_date = last_begin + ((last_end - last_begin) /2)
                     else:
-                        set_date = last_begin + 20
+                        set_date = last_begin + 30 # Sum 30 to the date of birth
                     works_years[int(k)] = set_date
                 elif last_end < 9999:
                     set_date = last_end - 20
                     works_years[int(k)] = set_date
+
     return works_years
