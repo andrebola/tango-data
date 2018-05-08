@@ -1,13 +1,14 @@
+import os
 import re
 import json
 
 def get_years():
-
-    f = json.load(open('data/clean/works.json'))
-    r  = json.load(open('data/clean/recordings.json'))
-    l  = json.load(open('data/clean/lyrics.json'))
-    a  = json.load(open('data/clean/artists.json'))
-    sadic =json.load(open('data/sadic_metadata.json'))
+    root_folder = os.path.dirname(os.path.realpath(__file__)) + '/../'
+    f = json.load(open(os.path.join(root_folder, 'data/clean/works.json')))
+    r  = json.load(open(os.path.join(root_folder, 'data/clean/recordings.json')))
+    l  = json.load(open(os.path.join(root_folder, 'data/clean/lyrics.json')))
+    a  = json.load(open(os.path.join(root_folder, 'data/clean/artists.json')))
+    sadic =json.load(open(os.path.join(root_folder, 'data/sadic_metadata.json')))
 
     works_years = {}
 
